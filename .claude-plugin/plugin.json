@@ -1,0 +1,5 @@
+{
+  "name": "make-scenario-manager",
+  "version": "1.0.9",
+  "description": "Agent for triggering Make.com On-Demand scenarios. Only scenarios with On-Demand scheduling are exposed as callable tools."
+}
