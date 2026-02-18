@@ -49,7 +49,7 @@ node scripts/dist/cli.js list-tools
 
 ```bash
 # Discover available On-Demand scenarios
-node scripts/dist/cli.js list-tools
+node /Users/USER/node scripts/dist/cli.js list-tools
 ```
 
 ## How It Works
