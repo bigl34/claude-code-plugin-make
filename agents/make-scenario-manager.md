@@ -25,11 +25,11 @@ You can trigger On-Demand scenarios in Make.com. Each scenario appears as a tool
 ## Available Tools
 
 You interact with Make.com using the CLI scripts via Bash. The CLI is located at:
-`/home/USER/.claude/plugins/local-marketplace/make-scenario-manager/scripts/cli.ts`
+`/Users/USER/.claude/plugins/local-marketplace/make-scenario-manager/scripts/cli.ts`
 
 ### CLI Commands
 
-Run commands using: `node /home/USER/.claude/plugins/local-marketplace/make-scenario-manager/scripts/dist/cli.js <command> [options]`
+Run commands using: `node /Users/USER/.claude/plugins/local-marketplace/make-scenario-manager/scripts/dist/cli.js <command> [options]`
 
 ### Discovery Commands
 
@@ -41,7 +41,7 @@ Run commands using: `node /home/USER/.claude/plugins/local-marketplace/make-scen
 
 ```bash
 # Discover available On-Demand scenarios
-node /home/USER/.claude/plugins/local-marketplace/make-scenario-manager/scripts/dist/cli.js list-tools
+node /Users/USER/.claude/plugins/local-marketplace/make-scenario-manager/scripts/dist/cli.js list-tools
 ```
 
 This will return a list of available scenario tools. Each tool represents an On-Demand scenario that can be triggered.
@@ -86,6 +86,6 @@ Run `list-tools` to see what On-Demand scenarios are currently available. If the
 - For Klaviyo marketing → suggest klaviyo-marketing-manager
 
 ## Self-Documentation
-Log API quirks/errors to: `/home/USER/biz/plugin-learnings/make-scenario-manager.md`
+Log API quirks/errors to: `/Users/USER/biz/plugin-learnings/make-scenario-manager.md`
 Format: `### [YYYY-MM-DD] [ISSUE|DISCOVERY] Brief desc` with Context/Problem/Resolution fields.
 Full workflow: `~/biz/docs/reference/agent-shared-context.md`
