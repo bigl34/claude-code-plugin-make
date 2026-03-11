@@ -19,7 +19,7 @@ Agent for triggering Make.com On-Demand scenarios. Only scenarios with On-Demand
 ## Quick Start
 
 ```bash
-git clone https://github.com/YOUR_GITHUB_USER/claude-code-plugin-make.git
+git clone https://github.com/bigl34/claude-code-plugin-make.git
 cd claude-code-plugin-make
 cp config.template.json config.json  # fill in your credentials
 cd scripts && npm install
