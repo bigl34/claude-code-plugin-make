@@ -3,7 +3,7 @@
 
 Agent for triggering Make.com On-Demand scenarios. Only scenarios with On-Demand scheduling are exposed as callable tools.
 
-![Version](https://img.shields.io/badge/version-1.0.10-blue) ![License: MIT](https://img.shields.io/badge/License-MIT-green) ![Node >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
+![Version](https://img.shields.io/badge/version-1.1.0-blue) ![License: MIT](https://img.shields.io/badge/License-MIT-green) ![Node >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 
 ## Features
 
@@ -39,14 +39,6 @@ node scripts/dist/cli.js list-tools
    ```
 4. Ensure the MCP server binary is available on your system (see the service's documentation)
 
-## Configuration
-
-Copy `config.template.json` to `config.json` and fill in the required values:
-
-| Field | Placeholder |
-|-------|-------------|
-| `credentials_path` | `/path/to/your/credentials` |
-
 ## Available Commands
 
 | Command      | Description                                     |
@@ -57,7 +49,7 @@ Copy `config.template.json` to `config.json` and fill in the required values:
 
 ```bash
 # Discover available On-Demand scenarios
-node /Users/USER/node scripts/dist/cli.js list-tools
+node $HOME/node scripts/dist/cli.js list-tools
 ```
 
 ## How It Works
