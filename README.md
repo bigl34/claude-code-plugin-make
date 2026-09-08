@@ -3,7 +3,7 @@
 
 Agent for triggering Make.com On-Demand scenarios. Only scenarios with On-Demand scheduling are exposed as callable tools.
 
-![Version](https://img.shields.io/badge/version-1.1.0-blue) ![License: MIT](https://img.shields.io/badge/License-MIT-green) ![Node >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
+![Version](https://img.shields.io/badge/version-1.2.0-blue) ![License: MIT](https://img.shields.io/badge/License-MIT-green) ![Node >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 
 ## Features
 
@@ -22,11 +22,11 @@ Agent for triggering Make.com On-Demand scenarios. Only scenarios with On-Demand
 git clone https://github.com/bigl34/claude-code-plugin-make.git
 cd claude-code-plugin-make
 cp config.template.json config.json  # fill in your credentials
-cd scripts && npm install
+npm --prefix scripts install
 ```
 
 ```bash
-node scripts/dist/cli.js list-tools
+npm --prefix scripts run cli -- list-tools
 ```
 
 ## Installation
@@ -49,7 +49,7 @@ node scripts/dist/cli.js list-tools
 
 ```bash
 # Discover available On-Demand scenarios
-node $HOME/node scripts/dist/cli.js list-tools
+npm --prefix "scripts" run cli -- list-tools
 ```
 
 ## How It Works

@@ -1,34 +1,17 @@
-/**
- * Make.com MCP Client
- *
- * MCP wrapper client for executing Make.com scenarios.
- * Connects to the Make MCP server via stdio transport.
- *
- * Key features:
- * - List available On-Demand scenarios as tools
- * - Execute scenarios with optional parameters
- * - Handle scenario responses and errors
- *
- * Note: Only On-Demand scheduled scenarios are exposed.
- * Scenarios with other triggers (webhook, polling, etc.) are not available.
- */
 
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { readFileSync } from "fs";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { loadServiceConfig, z } from "@local/cli-utils";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const MakeMcpConfigSchema = z.object({
+  mcpServer: z.object({
+    command: z.string().min(1),
+    args: z.array(z.string()),
+    env: z.record(z.string(), z.string()).optional(),
+  }),
+});
 
-interface MCPConfig {
-  mcpServer: {
-    command: string;
-    args: string[];
-    env?: Record<string, string>;
-  };
-}
+type MCPConfig = z.infer<typeof MakeMcpConfigSchema>;
 
 interface Tool {
   name: string;
@@ -43,16 +26,12 @@ export class MakeMCPClient {
   private connected: boolean = false;
 
   constructor() {
-    // When compiled, __dirname is dist/, so look in parent for config.json
-    const configPath = join(__dirname, "..", "config.json");
-    this.config = JSON.parse(readFileSync(configPath, "utf-8"));
+    this.config = loadServiceConfig("make-scenario-manager", {
+      schema: MakeMcpConfigSchema,
+    });
   }
 
-  // ============================================
-  // CONNECTION MANAGEMENT
-  // ============================================
 
-  /** Establishes connection to the Make MCP server. Auto-connects if needed. */
   async connect(): Promise<void> {
     if (this.connected) return;
 
@@ -72,11 +51,34 @@ export class MakeMCPClient {
       { capabilities: {} }
     );
 
-    await this.client.connect(this.transport);
+    try {
+      await this.client.connect(this.transport);
+    } catch (error) {
+      throw this.describeConnectFailure(error);
+    }
     this.connected = true;
   }
 
-  /** Closes the MCP server connection. */
+  private describeConnectFailure(error: unknown): Error {
+    const cause = error as { code?: string; message?: string } | null | undefined;
+    const isMissingBinary =
+      cause?.code === "ENOENT" || /\bENOENT\b/.test(cause?.message ?? "");
+
+    if (!isMissingBinary) {
+      return error instanceof Error ? error : new Error(String(error));
+    }
+
+    const command = this.config.mcpServer.command;
+    return new Error(
+      `Make MCP server '${command}' could not be started (ENOENT): the binary is not on PATH. ` +
+        `No request reached Make, so this says nothing about your scenarios. ` +
+        `The REST commands do not need this binary — use 'list-scenarios' or 'scenario-health' ` +
+        `for read-only scenario inspection. The MCP path is only needed to run On-Demand ` +
+        `scenarios, and would only ever expose those.`,
+      { cause: error }
+    );
+  }
+
   async disconnect(): Promise<void> {
     if (this.client && this.connected) {
       await this.client.close();
@@ -84,28 +86,13 @@ export class MakeMCPClient {
     }
   }
 
-  // ============================================
-  // SCENARIO OPERATIONS
-  // ============================================
 
-  /**
-   * Lists all available tools (On-Demand scenarios).
-   *
-   * The Make.com MCP server only exposes On-Demand scenarios as tools.
-   * If no On-Demand scenarios are configured, this returns an empty array.
-   */
   async listTools(): Promise<Tool[]> {
     await this.connect();
     const result = await this.client!.listTools();
     return result.tools;
   }
 
-  /**
-   * Execute an On-Demand scenario by its tool name
-   *
-   * @param toolName - The name of the tool (scenario) to execute
-   * @param params - Optional parameters to pass to the scenario
-   */
   async executeScenario(toolName: string, params?: Record<string, any>): Promise<any> {
     await this.connect();
 
