@@ -1,7 +1,6 @@
 ---
 name: make-scenario-manager
 description: Use this agent to run Make.com scenarios that are configured with On-Demand scheduling. This agent exposes your On-Demand scenarios as callable tools.
-model: claude-opus-4-6
 color: secondary
 mode: subagent
 ---
