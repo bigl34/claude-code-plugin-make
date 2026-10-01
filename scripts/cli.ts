@@ -1,9 +1,10 @@
 #!/usr/bin/env npx tsx
 
 import { z, createCommand, runCli, buildSafeOutput, wrapUntrustedField } from "@local/cli-utils";
-import { fileURLToPath } from "url";
+import { realpathSync } from "fs";
+import { pathToFileURL } from "url";
 import { MakeMCPClient } from "./mcp-client.js";
-import { MakeRestClient, type ScenarioBlueprint, type ScenarioSummary } from "./make-rest.js";
+import { MakeRestClient, isNotionWriteModule, type ScenarioBlueprint, type ScenarioSummary } from "./make-rest.js";
 
 const BLUEPRINT_POOL_SIZE = 4;
 
@@ -30,7 +31,7 @@ export function parseExecuteParams(paramsJson: string | undefined): Record<strin
   return parsed as Record<string, unknown>;
 }
 
-const commands = {
+export const commands = {
   "list-scenarios": createCommand(
     z.object({}),
     async () => {
@@ -38,7 +39,9 @@ const commands = {
       const scenarios = await restClient.listScenarios();
       const enriched = await enrichScenarios(restClient, scenarios);
       const active = enriched.filter((scenario) => scenario.isActive).length;
-      const notionWriters = enriched.filter((scenario) => scenario.notionTargets.length > 0).length;
+      const notionWriters = enriched.filter((scenario) =>
+        scenario.notionTargets.some((target) => isNotionWriteModule(target.module)),
+      ).length;
 
       return buildSafeOutput(
         { total: enriched.length, active, notionWriters },
@@ -172,7 +175,16 @@ async function mapWithConcurrency<T, R>(
   return results;
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+let isCliEntry = false;
+try {
+  isCliEntry =
+    process.argv[1] !== undefined &&
+    import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+} catch {
+  isCliEntry = false;
+}
+
+if (isCliEntry) {
   runCli(commands, MakeMCPClient, {
     programName: "make-cli",
     description: "Make.com On-Demand scenario execution",
